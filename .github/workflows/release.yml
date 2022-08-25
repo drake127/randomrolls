@@ -26,6 +26,7 @@ jobs:
         mkdir randomrolls\tools
         copy sources\x64\Release\cpuid-rdrand.exe randomrolls\tools\
         copy sources\x64\Release\cpuid-rdrand.pdb randomrolls\tools\
+        copy README randomrolls\readme.txt
         7z.exe a randomrolls.zip randomrolls Setup-randomrolls.exe
 
     - name: Create Release
