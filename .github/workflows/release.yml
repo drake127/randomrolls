@@ -1,0 +1,51 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  windows_msvc:
+    name: windows-msvc
+    runs-on: windows-2022
+
+    steps:
+    - name: Checkout Sources
+      uses: actions/checkout@v2
+
+    - name: Build Sources
+      env:
+        MSBUILD_PATH: "C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\MSBuild\\Current\\Bin\\"
+      shell: cmd
+      run: '"%MSBUILD_PATH%MSBuild.exe" sources/cpuid-rdrand.vcxproj /p:Platform=x64 /p:Configuration=Release'
+
+    - name: Pack artifacts
+      shell: cmd
+      run: |
+        mkdir randomrolls\tools
+        copy sources\x64\Release\cpuid-rdrand.exe randomrolls\tools\
+        copy sources\x64\Release\cpuid-rdrand.pdb randomrolls\tools\
+        7z.exe a randomrolls.zip randomrolls Setup-randomrolls.exe
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: ${{ github.ref }}
+        draft: true
+        prerelease: false
+        commitish: master
+
+    - name: Publish artifacts
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      with:
+        upload_url: ${{steps.create_release.outputs.upload_url}}
+        asset_path: randomrolls.zip
+        asset_name: randomrolls.zip
+        asset_content_type: application/zip
