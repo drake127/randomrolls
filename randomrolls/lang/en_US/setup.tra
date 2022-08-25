@@ -1,0 +1,7 @@
+@1000 = ~Improve randomness of dice rolls~
+
+@1010 = ~This mod currently supports BG:EE, BG2:EE, IWD:EE and PST:EE.~
+@1011 = ~Verifying CPU support for RDRAND instruction ...~
+@1012 = ~Your CPU does not support RDRAND instruction!~
+@1013 = ~This mod can patch only Windows binaries!~
+@1014 = ~rand() function signature was not found in the game executable!~
