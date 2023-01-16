@@ -1,13 +1,13 @@
 BACKUP ~randomrolls/backup~
 AUTHOR ~drake127@planescape.cz~
 README ~randomrolls/readme.txt~
-VERSION ~1.0~
+VERSION ~1.01~
 LANGUAGE
 	~English~ ~en_US~ ~randomrolls/lang/en_US/setup.tra~
 
 
 BEGIN @1000
-	REQUIRE_PREDICATE GAME_IS ~bgee bg2ee iwdee pstee~ @1010
+	REQUIRE_PREDICATE GAME_IS ~bgee bg2ee eet iwdee pstee~ @1010
 
 	PRINT @1011
 	AT_NOW rdrand_available ~randomrolls/tools/cpuid-rdrand.exe~
@@ -29,7 +29,7 @@ BEGIN @1000
 		REPLACE_TEXTUALLY CASE_SENSITIVE EXACT_MATCH ~%blob_rand%~ ~%blob_rdrand%~
 	END
 
-	ACTION_IF GAME_IS ~bgee bg2ee~
+	ACTION_IF GAME_IS ~bgee bg2ee eet~
 	BEGIN
 		REQUIRE_FILE ~Baldur.exe~ @1013
 		COPY ~Baldur.exe~ ~Baldur.exe~
