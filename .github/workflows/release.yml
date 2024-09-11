@@ -1,4 +1,4 @@
-name: Create Release
+name: Create a draft release
 
 on:
   push:
@@ -7,48 +7,45 @@ on:
   workflow_dispatch:
 
 jobs:
-  build_artifacts:
-    name: Build artifacts
+  build_sources:
+    name: Build sources
     uses: ./.github/workflows/build.yml
 
-  create_release:
-    name: Create release
-    needs: build_artifacts
+  create_draft_release:
+    name: Create a draft release
+    needs: build_sources
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Sources
+    - name: Checkout sources
       uses: actions/checkout@v4
-
+    
     - name: Fetch build artifacts
       uses: actions/download-artifact@v4
+      with:
+        merge-multiple: true
 
-    - name: Create a mod package
+    - name: Create Windows assets
       run: |
         mkdir randomrolls/tools
-        cp windows-artifact/cpuid-rdrand.exe randomrolls/tools/
-        cp windows-artifact/cpuid-rdrand.pdb randomrolls/tools/
-        cp README randomrolls/readme.txt
-        7z a randomrolls.zip randomrolls Setup-randomrolls.exe
+        cp cpuid-rdrand.exe randomrolls/tools/
+        cp cpuid-rdrand.pdb randomrolls/tools/
+        cp README.md randomrolls/readme.txt
+        7z a randomrolls-win.zip randomrolls Setup-randomrolls.exe
+    
+    - name: Create Linux assets
+      run: |
+        cp rand.so randomrolls/
+        cp README.md randomrolls/readme.txt
+        7z a randomrolls-linux.zip randomrolls/rand.so randomrolls/readme.txt
 
-    - name: Create a release
-      id: create_release
-      uses: actions/create-release@v1
+    - name: Create a draft release
+      uses: ncipollo/release-action@v1
       env:
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       with:
-        tag_name: ${{ github.ref }}
-        release_name: ${{ github.ref }}
+        artifacts: randomrolls-win.zip, randomrolls-linux.zip
+        artifactContentType: application/zip
+        commit: ${{github.ref}}
         draft: true
-        prerelease: false
-        commitish: master
-
-    - name: Publish artifacts
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      with:
-        upload_url: ${{steps.create_release.outputs.upload_url}}
-        asset_path: randomrolls.zip
-        asset_name: randomrolls.zip
-        asset_content_type: application/zip
+        tag: ${{github.ref}}
