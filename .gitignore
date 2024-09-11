@@ -1,3 +1,5 @@
 sources/cpuid-rdrand/.vs
 sources/cpuid-rdrand/x64
 sources/cpuid-rdrand/*.user
+sources/rand/*.o
+sources/rand/*.so
