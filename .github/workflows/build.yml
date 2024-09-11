@@ -11,11 +11,11 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Build
+    - name: Build sources
       working-directory: ./sources/rand
       run: make
 
-    - name: Upload artifacts
+    - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
         name: linux-artifact
@@ -34,10 +34,10 @@ jobs:
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
 
-    - name: Build
+    - name: Build sources
       run: 'MSBuild.exe sources/cpuid-rdrand/cpuid-rdrand.vcxproj /p:Platform=x64 /p:Configuration=Release'
 
-    - name: Upload artifacts
+    - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
         name: windows-artifact
