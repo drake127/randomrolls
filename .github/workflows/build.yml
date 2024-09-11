@@ -1,0 +1,48 @@
+name: Build sources
+
+on: [push, workflow_call, workflow_dispatch]
+
+jobs:
+  build_linux:
+    name: Linux build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Build
+      working-directory: ./sources/rand
+      run: make
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: linux-artifact
+        path: ./sources/rand/rand.so
+        if-no-files-found: error
+        retention-days: 7
+
+  build_windows:
+    name: Windows build
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Build
+      run: 'MSBuild.exe sources/cpuid-rdrand/cpuid-rdrand.vcxproj /p:Platform=x64 /p:Configuration=Release'
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-artifact
+        path: |
+          .\sources\cpuid-rdrand\x64\Release\cpuid-rdrand.exe
+          .\sources\cpuid-rdrand\x64\Release\cpuid-rdrand.pdb
+        if-no-files-found: error
+        retention-days: 7
