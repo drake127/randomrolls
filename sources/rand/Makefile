@@ -1,4 +1,4 @@
-﻿CXXFLAGS := -std=c++20 -g -Wpedantic -Wall -Wextra
+﻿CXXFLAGS := -std=c++20 -fPIC -g -Wpedantic -Wall -Wextra
 
 SOURCES  := $(wildcard *.cpp)
 OBJECTS  := $(strip $(patsubst %.cpp, %.o, $(SOURCES)))
