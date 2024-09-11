@@ -1,3 +1,3 @@
-sources/.vs
-sources/x64
-sources/*.user
+sources/cpuid-rdrand/.vs
+sources/cpuid-rdrand/x64
+sources/cpuid-rdrand/*.user
