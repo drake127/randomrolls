@@ -4,32 +4,34 @@ on:
   push:
     tags:
       - v*
+  workflow_dispatch:
 
 jobs:
-  windows_msvc:
-    name: windows-msvc
-    runs-on: windows-2022
+  build_artifacts:
+    name: Build artifacts
+    uses: ./.github/workflows/build.yml
+
+  create_release:
+    name: Create release
+    needs: build_artifacts
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout Sources
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
-    - name: Build Sources
-      env:
-        MSBUILD_PATH: "C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\MSBuild\\Current\\Bin\\"
-      shell: cmd
-      run: '"%MSBUILD_PATH%MSBuild.exe" sources/cpuid-rdrand.vcxproj /p:Platform=x64 /p:Configuration=Release'
+    - name: Fetch build artifacts
+      uses: actions/download-artifact@v4
 
-    - name: Pack artifacts
-      shell: cmd
+    - name: Create a mod package
       run: |
-        mkdir randomrolls\tools
-        copy sources\x64\Release\cpuid-rdrand.exe randomrolls\tools\
-        copy sources\x64\Release\cpuid-rdrand.pdb randomrolls\tools\
-        copy README randomrolls\readme.txt
-        7z.exe a randomrolls.zip randomrolls Setup-randomrolls.exe
+        mkdir randomrolls/tools
+        cp windows-artifact/cpuid-rdrand.exe randomrolls/tools/
+        cp windows-artifact/cpuid-rdrand.pdb randomrolls/tools/
+        cp README randomrolls/readme.txt
+        7z a randomrolls.zip randomrolls Setup-randomrolls.exe
 
-    - name: Create Release
+    - name: Create a release
       id: create_release
       uses: actions/create-release@v1
       env:
