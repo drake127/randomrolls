@@ -9,14 +9,14 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
 
     - name: Build sources
       working-directory: ./sources/rand
       run: make
 
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: linux-artifact
         path: ./sources/rand/rand.so
@@ -29,16 +29,16 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
 
     - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v2
+      uses: microsoft/setup-msbuild@v3
 
     - name: Build sources
       run: 'MSBuild.exe sources/cpuid-rdrand/cpuid-rdrand.vcxproj /p:Platform=x64 /p:Configuration=Release'
 
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: windows-artifact
         path: |
