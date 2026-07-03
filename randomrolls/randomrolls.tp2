@@ -1,7 +1,7 @@
 BACKUP ~randomrolls/backup~
 AUTHOR ~drake127@planescape.cz~
 README ~randomrolls/readme.txt~
-VERSION ~1.01~
+VERSION ~1.2~
 LANGUAGE
 	~English~ ~en_US~ ~randomrolls/lang/en_US/setup.tra~
 
@@ -29,10 +29,19 @@ BEGIN @1000
 		REPLACE_TEXTUALLY CASE_SENSITIVE EXACT_MATCH ~%blob_rand%~ ~%blob_rdrand%~
 	END
 
-	ACTION_IF GAME_IS ~bgee bg2ee eet~
+	ACTION_IF GAME_IS ~bgee~
 	BEGIN
 		REQUIRE_FILE ~Baldur.exe~ @1013
 		COPY ~Baldur.exe~ ~Baldur.exe~
+			SPRINT blob_rand   @1030
+			SPRINT blob_rdrand @1031
+			LAUNCH_PATCH_MACRO PATCH_RAND_IN_EXE
+	END
+
+	ACTION_IF GAME_IS ~bg2ee eet~
+	BEGIN
+		REQUIRE_FILE ~BaldurII.exe~ @1013
+		COPY ~BaldurII.exe~ ~BaldurII.exe~
 			SPRINT blob_rand   @1030
 			SPRINT blob_rdrand @1031
 			LAUNCH_PATCH_MACRO PATCH_RAND_IN_EXE
