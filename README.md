@@ -25,7 +25,7 @@ RDRAND is provided by CPU and its support was added in AMD Zen (2015) and Intel
 Ivy-Bridge (2012) processors. Therefore this mod will not work for owners of
 older processors. It was not my first choice but I had to fit the code in 33
 bytes that are available in PST:EE. Also, only Windows binaries patched to
-version 2.6 (for BG/BG2/EET/IWD) or version 3.1.3/3.1.4 (for PST) are currently
+version 2.7 (for BG/BG2/EET/IWD) or version 3.1 (for PST) are currently
 supported.
 
 The mod consists of single component:
@@ -42,6 +42,7 @@ library _rand.so_ which can be preloaded to a game binary.
 E.g.: `LD_PRELOAD=rand.so ./BaldursGate`
 
 Version History:
+  - 1.2: Updated signatures for version 2.7
   - 1.1: Added Linux support
   - 1.0: Initial release
 
