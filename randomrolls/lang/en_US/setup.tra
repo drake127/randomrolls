@@ -5,3 +5,4 @@
 @1012 = ~Your CPU does not support RDRAND instruction!~
 @1013 = ~This mod can patch only Windows binaries!~
 @1014 = ~rand() function signature was not found in the game executable!~
+@1015 = ~Game executable was not found!~

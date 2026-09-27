@@ -1,13 +1,14 @@
 BACKUP ~randomrolls/backup~
 AUTHOR ~drake127@planescape.cz~
 README ~randomrolls/readme.txt~
-VERSION ~1.2~
+VERSION ~1.2.1~
 LANGUAGE
 	~English~ ~en_US~ ~randomrolls/lang/en_US/setup.tra~
 
 
 BEGIN @1000
 	REQUIRE_PREDICATE GAME_IS ~bgee bg2ee eet iwdee pstee~ @1010
+	REQUIRE_PREDICATE (~%WEIDU_OS%~ STRING_EQUAL_CASE ~win32~) @1013
 
 	PRINT @1011
 	AT_NOW rdrand_available ~randomrolls/tools/cpuid-rdrand.exe~
@@ -21,46 +22,37 @@ BEGIN @1000
 	VERBOSE
 	DEFINE_PATCH_MACRO PATCH_RAND_IN_EXE
 	BEGIN
-		COUNT_REGEXP_INSTANCES CASE_SENSITIVE EXACT_MATCH ~%blob_rand%~ blob_matches
-		PATCH_IF blob_matches != 1
-		BEGIN
+		SET found = 0
+		PATCH_FOR_EACH signature_id IN ~1030~ ~1031~ ~1032~ BEGIN
+			PATCH_IF found == 0 BEGIN
+				SPRINT signature (AT signature_id)
+				COUNT_REGEXP_INSTANCES CASE_SENSITIVE EXACT_MATCH ~%signature%~ matches
+				PATCH_IF matches == 1 BEGIN
+					SET replacement_id = signature_id + 10
+					SPRINT replacement (AT replacement_id)
+					REPLACE_TEXTUALLY CASE_SENSITIVE EXACT_MATCH ~%signature%~ ~%replacement%~
+					SET found = 1
+				END
+			END
+		END
+		PATCH_IF found == 0 BEGIN
 			PATCH_FAIL @1014
 		END
-		REPLACE_TEXTUALLY CASE_SENSITIVE EXACT_MATCH ~%blob_rand%~ ~%blob_rdrand%~
 	END
 
-	ACTION_IF GAME_IS ~bgee~
-	BEGIN
-		REQUIRE_FILE ~Baldur.exe~ @1013
-		COPY ~Baldur.exe~ ~Baldur.exe~
-			SPRINT blob_rand   @1030
-			SPRINT blob_rdrand @1031
-			LAUNCH_PATCH_MACRO PATCH_RAND_IN_EXE
+	OUTER_SET exe_found = 0
+	ACTION_FOR_EACH exe IN ~BaldurII.exe~ ~Baldur.exe~ ~Icewind.exe~ ~Torment.exe~ BEGIN
+		ACTION_IF (exe_found == 0) AND (FILE_EXISTS ~%exe%~) BEGIN
+			OUTER_SPRINT exe_file ~%exe%~
+			OUTER_SET exe_found = 1
+		END
 	END
 
-	ACTION_IF GAME_IS ~bg2ee eet~
-	BEGIN
-		REQUIRE_FILE ~BaldurII.exe~ @1013
-		COPY ~BaldurII.exe~ ~BaldurII.exe~
-			SPRINT blob_rand   @1030
-			SPRINT blob_rdrand @1031
-			LAUNCH_PATCH_MACRO PATCH_RAND_IN_EXE
+	ACTION_IF exe_found == 0 BEGIN
+		FAIL @1015
 	END
 
-	ACTION_IF GAME_IS ~iwdee~
-	BEGIN
-		REQUIRE_FILE ~Icewind.exe~ @1013
-		COPY ~Icewind.exe~ ~Icewind.exe~
-			SPRINT blob_rand   @1030
-			SPRINT blob_rdrand @1031
-			LAUNCH_PATCH_MACRO PATCH_RAND_IN_EXE
-	END
+	COPY ~%exe_file%~ ~%exe_file%~
+		LAUNCH_PATCH_MACRO PATCH_RAND_IN_EXE
 
-	ACTION_IF GAME_IS ~pstee~
-	BEGIN
-		REQUIRE_FILE ~Torment.exe~ @1013
-		COPY ~Torment.exe~ ~Torment.exe~
-			SPRINT blob_rand   @1032
-			SPRINT blob_rdrand @1033
-			LAUNCH_PATCH_MACRO PATCH_RAND_IN_EXE
-	END
+
